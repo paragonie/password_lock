@@ -1,0 +1,33 @@
+{
+    "name":         "paragonie/password_lock",
+    "description":  "Wraps Bcrypt-SHA256 in Authenticated Encryption",
+    "version":      "0.1.0",
+    "keywords": [
+            "password",
+            "hash",
+            "hashing"
+        ],
+    "license":      "MIT",
+    "type":         "library",
+    "authors": [
+            {
+                "name":     "Scott Arciszewski",
+                "email":    "scott@paragonie.com",
+                "homepage": "https://paragonie.com",
+                "role":     "Developer"
+            }
+        ],
+    "support": {
+        "issues":   "https://github.com/paragonie/password_lock/issues",
+        "email":    "info@paragonie.com",
+        "source":   "https://github.com/paragonie/password_lock"
+    },
+    "autoload": {
+        "files": [
+            "autoload.php"
+        ]
+    },
+    "require": {
+        "defuse/php-encryption": "~1.2"
+    }
+}
