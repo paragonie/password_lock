@@ -8,7 +8,7 @@ class PasswordLock
      * 2. Encrypt-then-MAC the hash
      *
      * @param string $password
-     * @param string $aesKey - must be 16 bytes
+     * @param string $aesKey - must be exactly 16 bytes
      * @return string
      */
     public static function hashAndEncrypt($password, $aesKey)
@@ -33,7 +33,7 @@ class PasswordLock
      *
      * @param string $password
      * @param string $ciphertext
-     * @param string $aesKey - must be 16 bytes
+     * @param string $aesKey - must be exactly 16 bytes
      * @return boolean
      */
     public static function decryptAndVerify($password, $ciphertext, $aesKey)
