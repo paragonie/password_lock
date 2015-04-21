@@ -1,5 +1,5 @@
 <?php
-use \ParagonIE\PasswordLock;
+use \ParagonIE\PasswordLock\PasswordLock;
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
