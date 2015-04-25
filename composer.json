@@ -28,9 +28,9 @@
         ]
     },
     "require": {
-        "defuse/php-encryption": "~1.2"
+        "defuse/php-encryption": "^1.2"
     },
     "require-dev": {
-        "defuse/php-encryption": "~1.2"
+        "defuse/php-encryption": "^1.2"
     }
 }
