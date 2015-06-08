@@ -29,6 +29,6 @@ class PasswordLockTest extends PHPUnit_Framework_TestCase
         $password = PasswordLock::hashAndEncrypt('YELLOW SUBMARINE', $key);
         $password[0] = (\ord($password[0]) === 0 ? 255 : 0);
         
-        PasswordLock::decryptAndVerify('YELLOW SUBMARINE' $password, $key);
+        PasswordLock::decryptAndVerify('YELLOW SUBMARINE', $password, $key);
     }
 }
