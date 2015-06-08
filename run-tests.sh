@@ -36,14 +36,13 @@ if [ $? -eq 0 ]; then
     echo
     echo -e "\033[33mBegin Unit Testing\033[0m"
     # Run the testing suite
-    RESULT=`php phpunit.phar --bootstrap autoload.php tests`
+    php phpunit.phar --bootstrap autoload.php tests
     # Cleanup
     if [ "$clean" -eq 1 ]; then
         echo -e "\033[32mCleaning Up!\033[0m"
         rm -f phpunit.phar
         rm -f phpunit.phar.asc
     fi
-    exit $RESULT
 else
     echo
     chmod -x phpunit.phar
