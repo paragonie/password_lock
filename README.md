@@ -11,3 +11,11 @@ Depends on [defuse/php-encryption](https://github.com/defuse/php-encryption) for
 Peppering strategies are usually accomplished through a keyed hash function (e.g. HMAC-SHA256) and applies to the password before it's passed to the salted hash API (i.e. bcrypt). If your pepper/HMAC key is ever compromised, you have to reset every user's password and it becomes a headache.
 
 A hash then encrypt strategy offers **agility**; if your secret key is compromised (but, miraculously, the hashes are not), you can decrypt all of your users' hashes then re-encrypt them with a new key and they'll never suffer the inconvenience of an unscheduled password reset.
+
+## How much more secure is this than just using bcrypt?
+
+* You don't have to worry about the 72 character limit for bcrypt
+* You don't have to worry about accidentally creating a null-byte truncation vulnerability
+* If your database gets hacked, and your database is on a separate machine from your webserver, the attacker has to first decrypt the hashes before attempting to crack any of them.
+
+But realistically, this is only about as a secure as bcrypt.
