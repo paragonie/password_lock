@@ -18,4 +18,6 @@ A hash then encrypt strategy offers **agility**; if your secret key is compromis
 * You don't have to worry about accidentally creating a null-byte truncation vulnerability
 * If your database gets hacked, and your database is on a separate machine from your webserver, the attacker has to first decrypt the hashes before attempting to crack any of them.
 
-But realistically, this is only about as a secure as bcrypt.
+Here's a [proof-of-concept](http://3v4l.org/61VZq) for the first two points.
+
+But realistically, this library is only about as a secure as bcrypt.
