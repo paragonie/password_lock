@@ -14,17 +14,18 @@ class PasswordLock
     public static function hashAndEncrypt($password, $aesKey)
     {
         if (self::safeStrlen($aesKey) !== 16) {
-            throw new \Exception("Use a 16 byte key, numbnuts!");
+            throw new \Exception("Encryption keys must be 16 bytes long");
         }
-        return \Crypto::encrypt(
-            \password_hash(
-                \base64_encode(
-                    \hash('sha256', $password, true)
-                ),
-                PASSWORD_DEFAULT
+        $hash = \password_hash(
+            \base64_encode(
+                \hash('sha256', $password, true)
             ),
-            $aesKey
+            PASSWORD_DEFAULT
         );
+        if ($hash === false) {
+            throw new \Exception("Unknown hashing error.");
+        }
+        return \Crypto::encrypt($hash, $aesKey);
     }
 
     /**
@@ -39,7 +40,7 @@ class PasswordLock
     public static function decryptAndVerify($password, $ciphertext, $aesKey)
     {
         if (self::safeStrlen($aesKey) !== 16) {
-            throw new \Exception("Use a 16 byte key, numbnuts!");
+            throw new \Exception("Encryption keys must be 16 bytes long");
         }
         $hash = \Crypto::decrypt(
             $ciphertext,
@@ -52,9 +53,26 @@ class PasswordLock
             $hash
         );
     }
+    
+    /**
+     * Key rotation method -- decrypt with your old key then re-encrypt with your new key
+     * 
+     * @param string $ciphertext
+     * @param string $oldKey - must be exactly 16 bytes
+     * @param string $newKey - must be exactly 16 bytes
+     * @return string
+     */
+    public static function rotateKey($ciphertext, $oldKey, $newKey)
+    {
+        if (self::safeStrlen($oldKey) !== 16 || self::safeStrlen($newKey) !== 16) {
+            throw new \Exception("Encryption keys must be 16 bytes long");
+        }
+        $plaintext = \Crypto::decrypt($ciphertext, $oldKey);
+        return \Crypto::encrypt($plaintext, $newKey);
+    }
 
     /**
-     * Momma says mbstring.func_overload is the devil
+     * Don't count characters, count the number of bytes
      *
      * @param string
      * @return int
