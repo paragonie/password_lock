@@ -21,3 +21,20 @@ A hash then encrypt strategy offers **agility**; if your secret key is compromis
 Here's a [proof-of-concept](http://3v4l.org/61VZq) for the first two points.
 
 But realistically, this library is only about as a secure as bcrypt.
+
+## Usage Examples
+
+### Hash Password, Encrypt Hash, Authenticate Ciphertext**
+
+    $key = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F";
+    $storeMe = \ParagonIE\PasswordLock\PasswordLock::hashAndEncrypt($_POST['password'], $key);
+ 
+### Verify MAC, Decrypt Ciphertext, Verify Password
+
+    if (\ParagonIE\PasswordLock\PasswordLock::decryptAndVerify($_POST['password'], $storeMe, $key);
+
+### Re-encrypt a hash with a different encryption key
+
+    $newKey = "\xFF\xFE\xFD\xFC\xFB\xFA\xF9\xF8\xF7\xF6\xF5\xF4\xF3\xF2\xF1\xF0";
+    $newHash = \ParagonIE\PasswordLock\PasswordLock::rotateKey($storeMe, $key, $newKey);
+
