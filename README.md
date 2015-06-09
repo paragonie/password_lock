@@ -24,7 +24,7 @@ But realistically, this library is only about as a secure as bcrypt.
 
 ## Usage Examples
 
-### Hash Password, Encrypt Hash, Authenticate Ciphertext**
+### Hash Password, Encrypt Hash, Authenticate Ciphertext
 
     <?php
     use \ParagonIE\PasswordLock\PasswordLock;
