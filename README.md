@@ -26,17 +26,24 @@ But realistically, this library is only about as a secure as bcrypt.
 
 ### Hash Password, Encrypt Hash, Authenticate Ciphertext**
 
+    <?php
+    use \ParagonIE\PasswordLock\PasswordLock;
+    
     $key = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F";
-    $storeMe = \ParagonIE\PasswordLock\PasswordLock::hashAndEncrypt($_POST['password'], $key);
+    $storeMe = PasswordLock::hashAndEncrypt($_POST['password'], $key);
+    ?>
  
 ### Verify MAC, Decrypt Ciphertext, Verify Password
 
-    if (\ParagonIE\PasswordLock\PasswordLock::decryptAndVerify($_POST['password'], $storeMe, $key)) {
+    <?php
+    if (PasswordLock::decryptAndVerify($_POST['password'], $storeMe, $key)) {
         // Success!
     }
+    ?>
 
 ### Re-encrypt a hash with a different encryption key
 
+    <?php
     $newKey = "\xFF\xFE\xFD\xFC\xFB\xFA\xF9\xF8\xF7\xF6\xF5\xF4\xF3\xF2\xF1\xF0";
-    $newHash = \ParagonIE\PasswordLock\PasswordLock::rotateKey($storeMe, $key, $newKey);
-
+    $newHash = PasswordLock::rotateKey($storeMe, $key, $newKey);
+    ?>
