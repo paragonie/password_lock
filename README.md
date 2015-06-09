@@ -31,7 +31,9 @@ But realistically, this library is only about as a secure as bcrypt.
  
 ### Verify MAC, Decrypt Ciphertext, Verify Password
 
-    if (\ParagonIE\PasswordLock\PasswordLock::decryptAndVerify($_POST['password'], $storeMe, $key);
+    if (\ParagonIE\PasswordLock\PasswordLock::decryptAndVerify($_POST['password'], $storeMe, $key)) {
+        // Success!
+    }
 
 ### Re-encrypt a hash with a different encryption key
 
