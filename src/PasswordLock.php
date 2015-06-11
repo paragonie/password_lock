@@ -1,6 +1,8 @@
 <?php
 namespace ParagonIE\PasswordLock;
 
+use \Defuse\Crypto\Crypto;
+
 class PasswordLock
 {
     /**
@@ -25,7 +27,7 @@ class PasswordLock
         if ($hash === false) {
             throw new \Exception("Unknown hashing error.");
         }
-        return \Crypto::encrypt($hash, $aesKey);
+        return Crypto::encrypt($hash, $aesKey);
     }
 
     /**
@@ -42,7 +44,7 @@ class PasswordLock
         if (self::safeStrlen($aesKey) !== 16) {
             throw new \Exception("Encryption keys must be 16 bytes long");
         }
-        $hash = \Crypto::decrypt(
+        $hash = Crypto::decrypt(
             $ciphertext,
             $aesKey
         );
@@ -67,8 +69,8 @@ class PasswordLock
         if (self::safeStrlen($oldKey) !== 16 || self::safeStrlen($newKey) !== 16) {
             throw new \Exception("Encryption keys must be 16 bytes long");
         }
-        $plaintext = \Crypto::decrypt($ciphertext, $oldKey);
-        return \Crypto::encrypt($plaintext, $newKey);
+        $plaintext = Crypto::decrypt($ciphertext, $oldKey);
+        return Crypto::encrypt($plaintext, $newKey);
     }
 
     /**

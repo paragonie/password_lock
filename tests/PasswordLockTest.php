@@ -21,7 +21,7 @@ class PasswordLockTest extends PHPUnit_Framework_TestCase
     }
     
     /**
-     * @expectedException InvalidCiphertextException
+     * @expectedException \Defuse\Crypto\Exception\InvalidCiphertext
      */
     public function testBitflip()
     {
