@@ -20,7 +20,7 @@ class PasswordLock
         }
         $hash = \password_hash(
             \base64_encode(
-                \hash('sha256', $password, true)
+                \hash('sha512', $password, true)
             ),
             PASSWORD_DEFAULT
         );
@@ -28,6 +28,31 @@ class PasswordLock
             throw new \Exception("Unknown hashing error.");
         }
         return Crypto::encrypt($hash, $aesKey);
+    }
+    /**
+     * 1. VerifyHMAC-then-Decrypt the ciphertext to get the hash
+     * 2. Verify that the password matches the hash
+     *
+     * @param string $password
+     * @param string $ciphertext
+     * @param string $aesKey - must be exactly 16 bytes
+     * @return boolean
+     */
+    public static function decryptAndVerifyLegacy($password, $ciphertext, $aesKey)
+    {
+        if (self::safeStrlen($aesKey) !== 16) {
+            throw new \Exception("Encryption keys must be 16 bytes long");
+        }
+        $hash = Crypto::decrypt(
+            $ciphertext,
+            $aesKey
+        );
+        return \password_verify(
+            \base64_encode(
+                \hash('sha256', $password, true)
+            ),
+            $hash
+        );
     }
 
     /**
@@ -50,7 +75,7 @@ class PasswordLock
         );
         return \password_verify(
             \base64_encode(
-                \hash('sha256', $password, true)
+                \hash('sha512', $password, true)
             ),
             $hash
         );
