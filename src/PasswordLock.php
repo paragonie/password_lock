@@ -43,7 +43,7 @@ class PasswordLock
         if (self::safeStrlen($aesKey) !== 16) {
             throw new \Exception("Encryption keys must be 16 bytes long");
         }
-        $hash = Crypto::decrypt(
+        $hash = Crypto::legacyDecrypt(
             $ciphertext,
             $aesKey
         );
