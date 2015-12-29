@@ -2,6 +2,7 @@
 namespace ParagonIE\PasswordLock;
 
 use \Defuse\Crypto\Crypto;
+use \Defuse\Crypto\Key;
 
 class PasswordLock
 {
@@ -10,14 +11,11 @@ class PasswordLock
      * 2. Encrypt-then-MAC the hash
      *
      * @param string $password
-     * @param string $aesKey - must be exactly 16 bytes
+     * @param Key $aesKey
      * @return string
      */
-    public static function hashAndEncrypt($password, $aesKey)
+    public static function hashAndEncrypt($password, Key $aesKey)
     {
-        if (self::safeStrlen($aesKey) !== 16) {
-            throw new \Exception("Encryption keys must be 16 bytes long");
-        }
         $hash = \password_hash(
             \base64_encode(
                 \hash('sha512', $password, true)
@@ -61,14 +59,11 @@ class PasswordLock
      *
      * @param string $password
      * @param string $ciphertext
-     * @param string $aesKey - must be exactly 16 bytes
+     * @param Key $aesKey
      * @return boolean
      */
-    public static function decryptAndVerify($password, $ciphertext, $aesKey)
+    public static function decryptAndVerify($password, $ciphertext, Key $aesKey)
     {
-        if (self::safeStrlen($aesKey) !== 16) {
-            throw new \Exception("Encryption keys must be 16 bytes long");
-        }
         $hash = Crypto::decrypt(
             $ciphertext,
             $aesKey
@@ -85,15 +80,12 @@ class PasswordLock
      * Key rotation method -- decrypt with your old key then re-encrypt with your new key
      * 
      * @param string $ciphertext
-     * @param string $oldKey - must be exactly 16 bytes
-     * @param string $newKey - must be exactly 16 bytes
+     * @param  Key $oldKey
+     * @param Key $newKey
      * @return string
      */
-    public static function rotateKey($ciphertext, $oldKey, $newKey)
+    public static function rotateKey($ciphertext, Key $oldKey, Key $newKey)
     {
-        if (self::safeStrlen($oldKey) !== 16 || self::safeStrlen($newKey) !== 16) {
-            throw new \Exception("Encryption keys must be 16 bytes long");
-        }
         $plaintext = Crypto::decrypt($ciphertext, $oldKey);
         return Crypto::encrypt($plaintext, $newKey);
     }
@@ -104,7 +96,7 @@ class PasswordLock
      * @param string
      * @return int
      */
-    private static function safeStrlen($str)
+    protected static function safeStrlen($str)
     {
         static $exists = null;
         if ($exists === null) {

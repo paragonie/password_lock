@@ -25,7 +25,7 @@
     },
     "autoload": {
         "files": [
-            "autoload.php"
+            "src/PasswordLock.php"
         ]
     },
     "require": {
