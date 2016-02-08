@@ -1,3 +1,7 @@
+## Deprecation Notice
+
+Use [Halite](https://github.com/paragonie/halite) instead.
+
 # Password Lock
 
 **MIT Licensed** - feel free to use to enhance the security of any of your PHP projects
