@@ -2,9 +2,9 @@
 
 **MIT Licensed** - feel free to use to enhance the security of any of your PHP projects
 
-Wraps Bcrypt-SHA512 in Authenticated Encryption. Published by [Paragon Initiative Enteprises](https://paragonie.com). Check out our other [open source projects](https://paragonie.com/projects) too.
+Wraps Bcrypt-SHA384 in Authenticated Encryption. Published by [Paragon Initiative Enteprises](https://paragonie.com). Check out our other [open source projects](https://paragonie.com/projects) too.
 
-Depends on [defuse/php-encryption](https://github.com/defuse/php-encryption) for authenticated symmetric-key encryption
+Depends on [defuse/php-encryption](https://github.com/defuse/php-encryption) for authenticated symmetric-key encryption.
 
 ## How is this different than "peppering"?
 
@@ -28,22 +28,44 @@ But realistically, this library is only about as a secure as bcrypt.
 
 ```php
 use \ParagonIE\PasswordLock\PasswordLock;
+use \Defuse\Crypto\Key;
 
-$key = "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F";
-$storeMe = PasswordLock::hashAndEncrypt($_POST['password'], $key);
+$newKey = Key::createNewRandomKey();
+if (isset($_POST['password'])) {
+    if (!is_string($_POST['password'])) {
+        die("Password must be a string");
+    }
+    $storeMe = PasswordLock::hashAndEncrypt($_POST['password'], $key);
+}
 ```
  
 ### Verify MAC, Decrypt Ciphertext, Verify Password
 
 ```php
-if (PasswordLock::decryptAndVerify($_POST['password'], $storeMe, $key)) {
-    // Success!
+if (isset($_POST['password'])) {
+    if (!is_string($_POST['password'])) {
+        die("Password must be a string");
+    }
+    if (PasswordLock::decryptAndVerify($_POST['password'], $storeMe, $key)) {
+        // Success!
+    }
 }
 ```
 
 ### Re-encrypt a hash with a different encryption key
 
 ```php
-$newKey = "\xFF\xFE\xFD\xFC\xFB\xFA\xF9\xF8\xF7\xF6\xF5\xF4\xF3\xF2\xF1\xF0";
+$newKey = \Defuse\Crypto\Key::createNewRandomKey();
 $newHash = PasswordLock::rotateKey($storeMe, $key, $newKey);
+```
+
+### Migrate from Version 1 of the library
+
+```php
+$newHash = PasswordLock::upgradeFromVersion1(
+    $_POST['password'],
+    $oldHash,
+    $oldKey,
+    $newKey
+);
 ```
