@@ -3,6 +3,7 @@ namespace ParagonIE\PasswordLock;
 
 use \Defuse\Crypto\Crypto;
 use \Defuse\Crypto\Key;
+use \ParagonIE\ConstantTime\Base64;
 
 class PasswordLock
 {
@@ -16,9 +17,14 @@ class PasswordLock
      */
     public static function hashAndEncrypt($password, Key $aesKey)
     {
+        if (!\is_string($password)) {
+            throw new \InvalidArgumentException(
+                'Password must be a string.'
+            );
+        }
         $hash = \password_hash(
-            \base64_encode(
-                \hash('sha512', $password, true)
+            Base64::encode(
+                \hash('sha384', $password, true)
             ),
             PASSWORD_DEFAULT
         );
@@ -38,6 +44,11 @@ class PasswordLock
      */
     public static function decryptAndVerifyLegacy($password, $ciphertext, $aesKey)
     {
+        if (!\is_string($password)) {
+            throw new \InvalidArgumentException(
+                'Password must be a string.'
+            );
+        }
         if (self::safeStrlen($aesKey) !== 16) {
             throw new \Exception("Encryption keys must be 16 bytes long");
         }
@@ -46,7 +57,7 @@ class PasswordLock
             $aesKey
         );
         return \password_verify(
-            \base64_encode(
+            Base64::encode(
                 \hash('sha256', $password, true)
             ),
             $hash
@@ -64,13 +75,26 @@ class PasswordLock
      */
     public static function decryptAndVerify($password, $ciphertext, Key $aesKey)
     {
+        if (!\is_string($password)) {
+            throw new \InvalidArgumentException(
+                'Password must be a string.'
+            );
+        }
+        if (!\is_string($ciphertext)) {
+            throw new \InvalidArgumentException(
+                'Ciphertext must be a string.'
+            );
+        }
+        if (self::safeStrlen($aesKey) !== 32) {
+            throw new \Exception("Encryption keys must be 32 bytes long");
+        }
         $hash = Crypto::decrypt(
             $ciphertext,
             $aesKey
         );
         return \password_verify(
-            \base64_encode(
-                \hash('sha512', $password, true)
+            Base64::encode(
+                \hash('sha384', $password, true)
             ),
             $hash
         );
@@ -88,6 +112,30 @@ class PasswordLock
     {
         $plaintext = Crypto::decrypt($ciphertext, $oldKey);
         return Crypto::encrypt($plaintext, $newKey);
+    }
+    
+    /**
+     * For migrating from an older version of the library
+     * 
+     * @param string $password
+     * @param string $ciphertext
+     * @param sring $oldKey
+     * @param Key $newKey
+     * @return string
+     */
+    public static function upgradeFromVersion1(
+        $password,
+        $ciphertext,
+        $oldKey,
+        Key $newKey
+    ) {
+        if (!self::decryptAndVerifyLegacy($password, $ciphertext, $oldKey)) {
+            throw new \Exception(
+                'The correct password is necessary for legacy migration.'
+            );
+        }
+        $plaintext = Crypto::legacyDecrypt($ciphertext, $oldKey);
+        return self::hashAndEncrypt($password, $newKey);
     }
 
     /**
