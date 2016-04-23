@@ -4,6 +4,7 @@ namespace ParagonIE\PasswordLock;
 use \Defuse\Crypto\Crypto;
 use \Defuse\Crypto\Key;
 use \ParagonIE\ConstantTime\Base64;
+use \ParagonIE\ConstantTime\Binary;
 
 class PasswordLock
 {
@@ -14,6 +15,7 @@ class PasswordLock
      * @param string $password
      * @param Key $aesKey
      * @return string
+     * @throws \Exception
      */
     public static function hashAndEncrypt($password, Key $aesKey)
     {
@@ -40,7 +42,9 @@ class PasswordLock
      * @param string $password
      * @param string $ciphertext
      * @param string $aesKey - must be exactly 16 bytes
-     * @return boolean
+     * @return bool
+     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public static function decryptAndVerifyLegacy($password, $ciphertext, $aesKey)
     {
@@ -49,7 +53,7 @@ class PasswordLock
                 'Password must be a string.'
             );
         }
-        if (self::safeStrlen($aesKey) !== 16) {
+        if (Binary::safeStrlen($aesKey) !== 16) {
             throw new \Exception("Encryption keys must be 16 bytes long");
         }
         $hash = Crypto::legacyDecrypt(
@@ -71,7 +75,9 @@ class PasswordLock
      * @param string $password
      * @param string $ciphertext
      * @param Key $aesKey
-     * @return boolean
+     * @return bool
+     * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public static function decryptAndVerify($password, $ciphertext, Key $aesKey)
     {
@@ -84,9 +90,6 @@ class PasswordLock
             throw new \InvalidArgumentException(
                 'Ciphertext must be a string.'
             );
-        }
-        if (self::safeStrlen($aesKey) !== 32) {
-            throw new \Exception("Encryption keys must be 32 bytes long");
         }
         $hash = Crypto::decrypt(
             $ciphertext,
@@ -119,9 +122,10 @@ class PasswordLock
      * 
      * @param string $password
      * @param string $ciphertext
-     * @param sring $oldKey
+     * @param string $oldKey
      * @param Key $newKey
      * @return string
+     * @throws \Exception
      */
     public static function upgradeFromVersion1(
         $password,
@@ -135,24 +139,6 @@ class PasswordLock
             );
         }
         $plaintext = Crypto::legacyDecrypt($ciphertext, $oldKey);
-        return self::hashAndEncrypt($password, $newKey);
-    }
-
-    /**
-     * Don't count characters, count the number of bytes
-     *
-     * @param string
-     * @return int
-     */
-    protected static function safeStrlen($str)
-    {
-        static $exists = null;
-        if ($exists === null) {
-            $exists = \function_exists('\\mb_strlen');
-        }
-        if ($exists) {
-            return \mb_strlen($str, '8bit');
-        }
-        return \strlen($str);
+        return self::hashAndEncrypt($plaintext, $newKey);
     }
 }

@@ -29,8 +29,8 @@
     },
     "require": {
         "defuse/php-encryption": "^2.0",
-        "paragonie/random_compat": "^1.2",
-        "paragonie/constant_time_encoding": "^0.3"
+        "paragonie/random_compat": "^1|^2",
+        "paragonie/constant_time_encoding": "^1|^2"
     },
     "require-dev": {
         "defuse/php-encryption": "^2.0"
