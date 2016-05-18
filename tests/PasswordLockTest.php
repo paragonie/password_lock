@@ -1,5 +1,7 @@
 <?php
+declare(strict_types=1);
 use \ParagonIE\PasswordLock\PasswordLock;
+use \Defuse\Crypto\Key;
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
@@ -8,7 +10,7 @@ class PasswordLockTest extends PHPUnit_Framework_TestCase
 {
     public function testHash()
     {
-        $key = \Defuse\Crypto\Key::createNewRandomKey();
+        $key = Key::createNewRandomKey();
 
         $password = PasswordLock::hashAndEncrypt('YELLOW SUBMARINE', $key);
         
@@ -26,7 +28,7 @@ class PasswordLockTest extends PHPUnit_Framework_TestCase
      */
     public function testBitflip()
     {
-        $key = \Defuse\Crypto\Key::createNewRandomKey();
+        $key = Key::createNewRandomKey();
         $password = PasswordLock::hashAndEncrypt('YELLOW SUBMARINE', $key);
         $password[0] = (\ord($password[0]) === 0 ? 255 : 0);
         

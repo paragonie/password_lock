@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace ParagonIE\PasswordLock;
 
 use \Defuse\Crypto\Crypto;
@@ -17,7 +18,7 @@ class PasswordLock
      * @return string
      * @throws \Exception
      */
-    public static function hashAndEncrypt($password, Key $aesKey)
+    public static function hashAndEncrypt(string $password, Key $aesKey): string
     {
         if (!\is_string($password)) {
             throw new \InvalidArgumentException(
@@ -46,7 +47,7 @@ class PasswordLock
      * @throws \Exception
      * @throws \InvalidArgumentException
      */
-    public static function decryptAndVerifyLegacy($password, $ciphertext, $aesKey)
+    public static function decryptAndVerifyLegacy(string $password, string $ciphertext, string $aesKey): bool
     {
         if (!\is_string($password)) {
             throw new \InvalidArgumentException(
@@ -79,7 +80,7 @@ class PasswordLock
      * @throws \Exception
      * @throws \InvalidArgumentException
      */
-    public static function decryptAndVerify($password, $ciphertext, Key $aesKey)
+    public static function decryptAndVerify(string $password, string $ciphertext, Key $aesKey): bool
     {
         if (!\is_string($password)) {
             throw new \InvalidArgumentException(
@@ -111,7 +112,7 @@ class PasswordLock
      * @param Key $newKey
      * @return string
      */
-    public static function rotateKey($ciphertext, Key $oldKey, Key $newKey)
+    public static function rotateKey(string $ciphertext, Key $oldKey, Key $newKey): string
     {
         $plaintext = Crypto::decrypt($ciphertext, $oldKey);
         return Crypto::encrypt($plaintext, $newKey);
@@ -128,11 +129,11 @@ class PasswordLock
      * @throws \Exception
      */
     public static function upgradeFromVersion1(
-        $password,
-        $ciphertext,
-        $oldKey,
+        string $password,
+        string $ciphertext,
+        string $oldKey,
         Key $newKey
-    ) {
+    ): string {
         if (!self::decryptAndVerifyLegacy($password, $ciphertext, $oldKey)) {
             throw new \Exception(
                 'The correct password is necessary for legacy migration.'

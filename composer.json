@@ -28,11 +28,11 @@
         ]
     },
     "require": {
+        "php": ">= 7.0",
         "defuse/php-encryption": "^2.0",
-        "paragonie/random_compat": "^1|^2",
-        "paragonie/constant_time_encoding": "^1|^2"
+        "paragonie/constant_time_encoding": "^2"
     },
     "require-dev": {
-        "defuse/php-encryption": "^2.0"
+        "phpunit/phpunit": "^5|^6"
     }
 }

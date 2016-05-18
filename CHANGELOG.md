@@ -1,6 +1,12 @@
-# Version 2.0.0 (not released yet)
+# Version 3.0.0 (2016-05-18)
 
-* Update `defuse/php-encryption` to `2.0.0` (not released yet either)
+* Set minimum PHP version to 7.0
+* Use strict_types
+
+# Version 2.0.0 (2016-05-18)
+
+* Update `defuse/php-encryption` to `2.0.0`
+* Use `paragonie/constant_time_encoding`
 
 # Version 1.1.0
 
