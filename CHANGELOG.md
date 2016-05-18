@@ -1,6 +1,7 @@
-# Version 2.0.0 (not released yet)
+# Version 2.0.0 (2016-05-18)
 
-* Update `defuse/php-encryption` to `2.0.0` (not released yet either)
+* Update `defuse/php-encryption` to `2.0.0`
+* Use `paragonie/constant_time_encoding`
 
 # Version 1.1.0
 
