@@ -16,6 +16,7 @@ class PasswordLock
      * @param Key $aesKey
      * @return string
      * @throws \Exception
+     * @throws \InvalidArgumentException
      */
     public static function hashAndEncrypt($password, Key $aesKey)
     {
@@ -102,10 +103,10 @@ class PasswordLock
             $hash
         );
     }
-    
+
     /**
      * Key rotation method -- decrypt with your old key then re-encrypt with your new key
-     * 
+     *
      * @param string $ciphertext
      * @param  Key $oldKey
      * @param Key $newKey
@@ -116,10 +117,10 @@ class PasswordLock
         $plaintext = Crypto::decrypt($ciphertext, $oldKey);
         return Crypto::encrypt($plaintext, $newKey);
     }
-    
+
     /**
      * For migrating from an older version of the library
-     * 
+     *
      * @param string $password
      * @param string $ciphertext
      * @param string $oldKey
