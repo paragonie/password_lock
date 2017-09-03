@@ -1,15 +1,22 @@
 language: php
+sudo: false
 
 php:
+    - 5.4
+    - 5.5
+    - 5.6
+    - 7.0
+    - 7.1
+    - 7.2
 
-- 5.6
-- 5.5
-- 5.4
+matrix:
+    fast_finish: true
 
 install:
+    - composer self-update
+    - composer update
+    - chmod +x ./run-tests.sh
 
-- composer self-update
-- composer update
-- chmod +x ./run-tests.sh
-
-script: ./run-tests.sh
+script:
+    - vendor/bin/phpunit
+    - vendor/bin/psalm

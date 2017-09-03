@@ -1,12 +1,15 @@
 <?php
 declare(strict_types=1);
+
 use \ParagonIE\PasswordLock\PasswordLock;
 use \Defuse\Crypto\Key;
+use PHPUnit\Framework\TestCase;
+
 /**
  * @backupGlobals disabled
  * @backupStaticAttributes disabled
  */
-class PasswordLockTest extends PHPUnit_Framework_TestCase
+class PasswordLockTest extends TestCase
 {
     public function testHash()
     {

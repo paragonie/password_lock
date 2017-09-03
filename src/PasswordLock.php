@@ -20,18 +20,14 @@ class PasswordLock
      */
     public static function hashAndEncrypt(string $password, Key $aesKey): string
     {
-        if (!\is_string($password)) {
-            throw new \InvalidArgumentException(
-                'Password must be a string.'
-            );
-        }
+        /** @var string $hash */
         $hash = \password_hash(
             Base64::encode(
                 \hash('sha384', $password, true)
             ),
             PASSWORD_DEFAULT
         );
-        if ($hash === false) {
+        if (!\is_string($hash)) {
             throw new \Exception("Unknown hashing error.");
         }
         return Crypto::encrypt($hash, $aesKey);
@@ -49,11 +45,6 @@ class PasswordLock
      */
     public static function decryptAndVerifyLegacy(string $password, string $ciphertext, string $aesKey): bool
     {
-        if (!\is_string($password)) {
-            throw new \InvalidArgumentException(
-                'Password must be a string.'
-            );
-        }
         if (Binary::safeStrlen($aesKey) !== 16) {
             throw new \Exception("Encryption keys must be 16 bytes long");
         }
@@ -61,6 +52,9 @@ class PasswordLock
             $ciphertext,
             $aesKey
         );
+        if (!\is_string($hash)) {
+            throw new \Exception("Unknown hashing error.");
+        }
         return \password_verify(
             Base64::encode(
                 \hash('sha256', $password, true)
@@ -82,20 +76,13 @@ class PasswordLock
      */
     public static function decryptAndVerify(string $password, string $ciphertext, Key $aesKey): bool
     {
-        if (!\is_string($password)) {
-            throw new \InvalidArgumentException(
-                'Password must be a string.'
-            );
-        }
-        if (!\is_string($ciphertext)) {
-            throw new \InvalidArgumentException(
-                'Ciphertext must be a string.'
-            );
-        }
         $hash = Crypto::decrypt(
             $ciphertext,
             $aesKey
         );
+        if (!\is_string($hash)) {
+            throw new \Exception("Unknown hashing error.");
+        }
         return \password_verify(
             Base64::encode(
                 \hash('sha384', $password, true)
