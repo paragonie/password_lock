@@ -30,7 +30,7 @@ But realistically, this library is only about as a secure as bcrypt.
 use \ParagonIE\PasswordLock\PasswordLock;
 use \Defuse\Crypto\Key;
 
-$newKey = Key::createNewRandomKey();
+$key = Key::createNewRandomKey();
 if (isset($_POST['password'])) {
     if (!is_string($_POST['password'])) {
         die("Password must be a string");
