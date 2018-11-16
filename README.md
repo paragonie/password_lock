@@ -2,7 +2,7 @@
 
 **MIT Licensed** - feel free to use to enhance the security of any of your PHP projects
 
-Wraps Bcrypt-SHA384 in Authenticated Encryption. Published by [Paragon Initiative Enteprises](https://paragonie.com). Check out our other [open source projects](https://paragonie.com/projects) too.
+Wraps Password Hashing in Authenticated Encryption. Published by [Paragon Initiative Enteprises](https://paragonie.com). Check out our other [open source projects](https://paragonie.com/projects) too.
 
 Depends on [defuse/php-encryption](https://github.com/defuse/php-encryption) for authenticated symmetric-key encryption.
 
@@ -27,15 +27,19 @@ But realistically, this library is only about as a secure as bcrypt.
 ### Hash Password, Encrypt Hash, Authenticate Ciphertext
 
 ```php
-use \ParagonIE\PasswordLock\PasswordLock;
-use \Defuse\Crypto\Key;
+use ParagonIE\PasswordLock\PasswordLock;
+use Defuse\Crypto\Key;
 
 $key = Key::createNewRandomKey();
+
+$passwordLock = new PasswordLock();
+
 if (isset($_POST['password'])) {
     if (!is_string($_POST['password'])) {
         die("Password must be a string");
     }
-    $storeMe = PasswordLock::hashAndEncrypt($_POST['password'], $key);
+    
+    $storeMe = $passwordLock->hashAndEncrypt($_POST['password'], $key);
 }
 ```
  
@@ -46,7 +50,8 @@ if (isset($_POST['password'])) {
     if (!is_string($_POST['password'])) {
         die("Password must be a string");
     }
-    if (PasswordLock::decryptAndVerify($_POST['password'], $storeMe, $key)) {
+    
+    if ($passwordLock->decryptAndVerify($_POST['password'], $storeMe, $key)) {
         // Success!
     }
 }
@@ -59,13 +64,67 @@ $newKey = \Defuse\Crypto\Key::createNewRandomKey();
 $newHash = PasswordLock::rotateKey($storeMe, $key, $newKey);
 ```
 
-### Migrate from Version 1 of the library
+### Using Password hasher
+
+by default, PasswordLock uses Bcrypt-SHA384 based PasswordHasher.
 
 ```php
-$newHash = PasswordLock::upgradeFromVersion1(
-    $_POST['password'],
-    $oldHash,
-    $oldKey,
-    $newKey
-);
+<?php
+
+use ParagonIE\PasswordLock\{
+    PasswordLock,
+    Hasher\PasswordHasher
+};
+
+// doing this : 
+$hasher = new PasswordHasher(PASSWORD_DEFAULT, []);
+$lock = new PasswordLock($hasher);
+// is same as this : 
+$lock = new PasswordLock();
+```
+
+you can add options or specify another PHP `password_hash` algorithm as following :
+
+```php
+<?php
+
+use ParagonIE\PasswordLock\{
+    PasswordLock,
+    Hasher\PasswordHasher
+};
+
+// use Argon2I algorithm instead of Bcrypt
+$hasher = new PasswordHasher(PASSWORD_ARGON2I, [
+    'memory_cost' => 2048
+]);
+$lock = new PasswordLock($hasher);
+```
+
+## Costume Password Hasher
+
+`ParagonIE\PasswordLock\PasswordLock` accepts any `ParagonIE\PasswordLock\Hasher\PasswordHasherInterface` implementation as the first argument.
+
+```php
+<?php
+
+use ParagonIE\PasswordLock\{
+    PasswordLock,
+    Hasher\PasswordHasherInterface
+};
+
+class MyPasswordHasher implements PasswordHasherInterface 
+{
+    public function hash(string $password) : string
+    {
+        // hash password
+    }
+    
+    public function verify(string $password, string $hash) : bool
+    {
+        // verify hash against the given password
+    }
+}
+
+$hasher = new MyPasswordHasher();
+$lock = new PasswordLock($hasher);
 ```

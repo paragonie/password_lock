@@ -1,9 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
-use \ParagonIE\PasswordLock\PasswordLock;
-use \Defuse\Crypto\Key;
+namespace ParagonIE\PasswordLock\Tests;
+
+use Defuse\Crypto\Exception\EnvironmentIsBrokenException;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
+use ParagonIE\PasswordLock\PasswordLock;
+use Defuse\Crypto\Key;
 use PHPUnit\Framework\TestCase;
+
+use function ord;
 
 /**
  * @backupGlobals disabled
@@ -11,30 +18,61 @@ use PHPUnit\Framework\TestCase;
  */
 class PasswordLockTest extends TestCase
 {
-    public function testHash()
+    /**
+     * @var PasswordLock
+     */
+    protected $lock;
+
+    public function setUp()
+    {
+        $this->lock = new PasswordLock();
+    }
+
+    /**
+     * @throws EnvironmentIsBrokenException
+     * @throws WrongKeyOrModifiedCiphertextException
+     */
+    public function testHash(): void
     {
         $key = Key::createNewRandomKey();
 
-        $password = PasswordLock::hashAndEncrypt('YELLOW SUBMARINE', $key);
+        $password = $this->lock->hashAndEncrypt('YELLOW SUBMARINE', $key);
         
         $this->assertTrue(
-            PasswordLock::decryptAndVerify('YELLOW SUBMARINE', $password, $key)
+            $this->lock->decryptAndVerify('YELLOW SUBMARINE', $password, $key)
         );
         
         $this->assertFalse(
-            PasswordLock::decryptAndVerify('YELLOW SUBMARINF', $password, $key)
+            $this->lock->decryptAndVerify('YELLOW SUBMARINF', $password, $key)
         );
     }
-    
+
     /**
      * @expectedException \Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException
+     *
+     * @throws EnvironmentIsBrokenException
      */
-    public function testBitflip()
+    public function testBitflip(): void
     {
         $key = Key::createNewRandomKey();
-        $password = PasswordLock::hashAndEncrypt('YELLOW SUBMARINE', $key);
-        $password[0] = (\ord($password[0]) === 0 ? 255 : 0);
+
+        $password = $this->lock->hashAndEncrypt('YELLOW SUBMARINE', $key);
+
+        $password[0] = (ord($password[0]) === 0 ? 255 : 0);
         
-        PasswordLock::decryptAndVerify('YELLOW SUBMARINE', $password, $key);
+        $this->lock->decryptAndVerify('YELLOW SUBMARINE', $password, $key);
+    }
+
+    /**
+     * @throws EnvironmentIsBrokenException
+     */
+    public function testNullByteTruncation(): void
+    {
+        $key = Key::createNewRandomKey();
+
+        $hash1 = $this->lock->hashAndEncrypt("abc\0defg", $key);
+        $hash2 = $this->lock->hashAndEncrypt("abc", $key);
+
+        $this->assertNotSame($hash1, $hash2);
     }
 }
