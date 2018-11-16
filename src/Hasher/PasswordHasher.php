@@ -26,23 +26,12 @@ class PasswordHasher implements PasswordHasherInterface
      */
     protected $algorithm;
 
-    /**
-     * PasswordHasher constructor.
-     *
-     * @param int   $algorithm
-     * @param array $options
-     */
     public function __construct(int $algorithm = PASSWORD_DEFAULT, array $options = [])
     {
         $this->algorithm = $algorithm;
         $this->options = $options;
     }
 
-    /**
-     * @param string $password
-     *
-     * @return string
-     */
     public function hash(string $password): string
     {
         $hash = password_hash(
@@ -60,12 +49,6 @@ class PasswordHasher implements PasswordHasherInterface
         return $hash;
     }
 
-    /**
-     * @param string $password
-     * @param string $hash
-     *
-     * @return bool
-     */
     public function verify(string $password, string $hash): bool
     {
         return password_verify(
@@ -76,17 +59,11 @@ class PasswordHasher implements PasswordHasherInterface
         );
     }
 
-    /**
-     * @return int
-     */
     public function getAlgorithm(): int
     {
         return $this->algorithm;
     }
 
-    /**
-     * @return array
-     */
     public function getOptions(): array
     {
         return $this->options;

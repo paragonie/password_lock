@@ -30,11 +30,6 @@ class PasswordLock
      * 1. Hash password
      * 2. Encrypt-then-MAC the hash
      *
-     * @param string $password
-     * @param Key    $aesKey
-     *
-     * @return string
-     *
      * @throws EnvironmentIsBrokenException
      */
     public function hashAndEncrypt(string $password, Key $aesKey): string
@@ -47,12 +42,6 @@ class PasswordLock
     /**
      * 1. VerifyHMAC-then-Decrypt the ciphertext to get the hash
      * 2. Verify that the password matches the hash
-     *
-     * @param string $password
-     * @param string $ciphertext
-     * @param Key    $aesKey
-     *
-     * @return bool
      *
      * @throws EnvironmentIsBrokenException
      * @throws WrongKeyOrModifiedCiphertextException
@@ -67,18 +56,12 @@ class PasswordLock
         if (!is_string($hash)) {
             throw new CryptoException('Unknown decryption error.');
         }
-
+        
         return $this->hasher->verify($password, $hash);
     }
 
     /**
      * Key rotation method -- decrypt with your old key then re-encrypt with your new key
-     *
-     * @param string $ciphertext
-     * @param  Key   $oldKey
-     * @param Key    $newKey
-     *
-     * @return string
      *
      * @throws EnvironmentIsBrokenException
      * @throws WrongKeyOrModifiedCiphertextException
