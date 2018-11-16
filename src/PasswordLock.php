@@ -8,11 +8,8 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Exception\EnvironmentIsBrokenException;
 use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 use Defuse\Crypto\Key;
-use ParagonIE\PasswordLock\Exception\CryptoException;
 use ParagonIE\PasswordLock\Hasher\PasswordHasher;
 use ParagonIE\PasswordLock\Hasher\PasswordHasherInterface;
-
-use function is_string;
 
 class PasswordLock
 {
@@ -53,10 +50,6 @@ class PasswordLock
             $aesKey
         );
 
-        if (!is_string($hash)) {
-            throw new CryptoException('Unknown decryption error.');
-        }
-        
         return $this->hasher->verify($password, $hash);
     }
 
