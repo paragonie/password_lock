@@ -27,31 +27,37 @@ But realistically, this library is only about as a secure as bcrypt.
 ### Hash Password, Encrypt Hash, Authenticate Ciphertext
 
 ```php
+<?php
+
 use ParagonIE\PasswordLock\PasswordLock;
 use Defuse\Crypto\Key;
 
 $key = Key::createNewRandomKey();
 
-$passwordLock = new PasswordLock();
+$passwordLock = new PasswordLock($key);
 
 if (isset($_POST['password'])) {
     if (!is_string($_POST['password'])) {
-        die("Password must be a string");
+        die('Password must be a string');
     }
     
-    $storeMe = $passwordLock->hashAndEncrypt($_POST['password'], $key);
+    $storeMe = $passwordLock->hashAndEncrypt($_POST['password']);
 }
 ```
  
 ### Verify MAC, Decrypt Ciphertext, Verify Password
 
 ```php
+<?php
+
+...
+
 if (isset($_POST['password'])) {
     if (!is_string($_POST['password'])) {
-        die("Password must be a string");
+        die('Password must be a string');
     }
     
-    if ($passwordLock->decryptAndVerify($_POST['password'], $storeMe, $key)) {
+    if ($passwordLock->decryptAndVerify($_POST['password'], $storeMe)) {
         // Success!
     }
 }
@@ -60,6 +66,10 @@ if (isset($_POST['password'])) {
 ### Re-encrypt a hash with a different encryption key
 
 ```php
+<?php
+
+use ParagonIE\PasswordLock\PasswordLock;
+
 $newKey = \Defuse\Crypto\Key::createNewRandomKey();
 $newHash = PasswordLock::rotateKey($storeMe, $key, $newKey);
 ```
@@ -78,9 +88,9 @@ use ParagonIE\PasswordLock\{
 
 // doing this : 
 $hasher = new PasswordHasher(PASSWORD_DEFAULT, []);
-$lock = new PasswordLock($hasher);
+$lock = new PasswordLock($key,$hasher);
 // is same as this : 
-$lock = new PasswordLock();
+$lock = new PasswordLock($key);
 ```
 
 you can add options or specify another PHP `password_hash` algorithm as following :
@@ -97,7 +107,7 @@ use ParagonIE\PasswordLock\{
 $hasher = new PasswordHasher(PASSWORD_ARGON2I, [
     'memory_cost' => 2048
 ]);
-$lock = new PasswordLock($hasher);
+$lock = new PasswordLock($key,$hasher);
 ```
 
 ## Costume Password Hasher
@@ -126,5 +136,5 @@ class MyPasswordHasher implements PasswordHasherInterface
 }
 
 $hasher = new MyPasswordHasher();
-$lock = new PasswordLock($hasher);
+$lock = new PasswordLock($key,$hasher);
 ```

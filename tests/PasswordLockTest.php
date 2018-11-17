@@ -23,10 +23,16 @@ class PasswordLockTest extends TestCase
      */
     protected $lock;
 
+    /**
+     * @throws EnvironmentIsBrokenException
+     */
     public function setUp()
     {
-        $this->lock = new PasswordLock();
+        $this->lock = new PasswordLock(
+            Key::createNewRandomKey()
+        );
     }
+
 
     /**
      * @throws EnvironmentIsBrokenException
@@ -34,16 +40,14 @@ class PasswordLockTest extends TestCase
      */
     public function testHash(): void
     {
-        $key = Key::createNewRandomKey();
+        $password = $this->lock->hashAndEncrypt('YELLOW SUBMARINE');
 
-        $password = $this->lock->hashAndEncrypt('YELLOW SUBMARINE', $key);
-        
         $this->assertTrue(
-            $this->lock->decryptAndVerify('YELLOW SUBMARINE', $password, $key)
+            $this->lock->decryptAndVerify('YELLOW SUBMARINE', $password)
         );
         
         $this->assertFalse(
-            $this->lock->decryptAndVerify('YELLOW SUBMARINF', $password, $key)
+            $this->lock->decryptAndVerify('YELLOW SUBMARINF', $password)
         );
     }
 
@@ -54,13 +58,11 @@ class PasswordLockTest extends TestCase
      */
     public function testBitflip(): void
     {
-        $key = Key::createNewRandomKey();
-
-        $password = $this->lock->hashAndEncrypt('YELLOW SUBMARINE', $key);
+        $password = $this->lock->hashAndEncrypt('YELLOW SUBMARINE');
 
         $password[0] = (ord($password[0]) === 0 ? 255 : 0);
         
-        $this->lock->decryptAndVerify('YELLOW SUBMARINE', $password, $key);
+        $this->lock->decryptAndVerify('YELLOW SUBMARINE', $password);
     }
 
     /**
@@ -68,10 +70,8 @@ class PasswordLockTest extends TestCase
      */
     public function testNullByteTruncation(): void
     {
-        $key = Key::createNewRandomKey();
-
-        $hash1 = $this->lock->hashAndEncrypt("abc\0defg", $key);
-        $hash2 = $this->lock->hashAndEncrypt("abc", $key);
+        $hash1 = $this->lock->hashAndEncrypt("abc\0defg");
+        $hash2 = $this->lock->hashAndEncrypt("abc");
 
         $this->assertNotSame($hash1, $hash2);
     }

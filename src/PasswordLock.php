@@ -14,12 +14,19 @@ use ParagonIE\PasswordLock\Hasher\PasswordHasherInterface;
 class PasswordLock
 {
     /**
+     * @var Key
+     */
+    protected $key;
+
+    /**
      * @var PasswordHasherInterface
      */
     protected $hasher;
 
-    public function __construct(PasswordHasherInterface $hasher = null)
+
+    public function __construct(Key $key,PasswordHasherInterface $hasher = null)
     {
+        $this->key = $key;
         $this->hasher = $hasher ?? new PasswordHasher();
     }
 
@@ -29,11 +36,11 @@ class PasswordLock
      *
      * @throws EnvironmentIsBrokenException
      */
-    public function hashAndEncrypt(string $password, Key $aesKey): string
+    public function hashAndEncrypt(string $password): string
     {
         $hash = $this->hasher->hash($password);
 
-        return Crypto::encrypt($hash, $aesKey);
+        return Crypto::encrypt($hash, $this->key);
     }
 
     /**
@@ -43,11 +50,11 @@ class PasswordLock
      * @throws EnvironmentIsBrokenException
      * @throws WrongKeyOrModifiedCiphertextException
      */
-    public function decryptAndVerify(string $password, string $ciphertext, Key $aesKey): bool
+    public function decryptAndVerify(string $password, string $ciphertext): bool
     {
         $hash = Crypto::decrypt(
             $ciphertext,
-            $aesKey
+            $this->key
         );
 
         return $this->hasher->verify($password, $hash);
