@@ -6,10 +6,9 @@ namespace ParagonIE\PasswordLock\Tests;
 
 use Defuse\Crypto\Exception\EnvironmentIsBrokenException;
 use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
-use ParagonIE\PasswordLock\PasswordLock;
 use Defuse\Crypto\Key;
+use ParagonIE\PasswordLock\PasswordLock;
 use PHPUnit\Framework\TestCase;
-
 use function ord;
 
 /**
@@ -33,7 +32,6 @@ class PasswordLockTest extends TestCase
         );
     }
 
-
     /**
      * @throws EnvironmentIsBrokenException
      * @throws WrongKeyOrModifiedCiphertextException
@@ -45,7 +43,7 @@ class PasswordLockTest extends TestCase
         $this->assertTrue(
             $this->lock->check('YELLOW SUBMARINE', $password)
         );
-        
+
         $this->assertFalse(
             $this->lock->check('YELLOW SUBMARINF', $password)
         );
@@ -60,8 +58,8 @@ class PasswordLockTest extends TestCase
     {
         $password = $this->lock->lock('YELLOW SUBMARINE');
 
-        $password[0] = (ord($password[0]) === 0 ? 255 : 0);
-        
+        $password[0] = (0 === ord($password[0]) ? 255 : 0);
+
         $this->lock->check('YELLOW SUBMARINE', $password);
     }
 
