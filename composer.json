@@ -39,7 +39,7 @@
     },
     "scripts": {
         "test": "phpunit --colors=always",
-        "analyze": "pslam",
+        "analyze": "psalm",
         "cs-check": "php-cs-fixer fix --dry-run -vvv",
         "cs-fix": "php-cs-fixer fix -vvv",
         "check": [
