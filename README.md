@@ -16,7 +16,7 @@ A hash then encrypt strategy offers **agility**; if your secret key is compromis
 
 * You don't have to worry about the 72 character limit for bcrypt
 * You don't have to worry about accidentally creating a null-byte truncation vulnerability
-* If your database gets hacked, and your database is on a separate machine from your webserver, the attacker has to first decrypt the hashes before attempting to crack any of them.
+* If your database gets hacked, and your database is on a separate machine from your web server, the attacker has to first decrypt the hashes before attempting to crack any of them.
 
 Here's a [proof-of-concept](http://3v4l.org/61VZq) for the first two points.
 
@@ -41,7 +41,7 @@ if (isset($_POST['password'])) {
         die('Password must be a string');
     }
     
-    $storeMe = $passwordLock->hashAndEncrypt($_POST['password']);
+    $storeMe = $passwordLock->lock($_POST['password']);
 }
 ```
  
@@ -57,7 +57,7 @@ if (isset($_POST['password'])) {
         die('Password must be a string');
     }
     
-    if ($passwordLock->decryptAndVerify($_POST['password'], $storeMe)) {
+    if ($passwordLock->check($_POST['password'], $storeMe)) {
         // Success!
     }
 }

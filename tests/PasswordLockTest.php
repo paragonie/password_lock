@@ -40,14 +40,14 @@ class PasswordLockTest extends TestCase
      */
     public function testHash(): void
     {
-        $password = $this->lock->hashAndEncrypt('YELLOW SUBMARINE');
+        $password = $this->lock->lock('YELLOW SUBMARINE');
 
         $this->assertTrue(
-            $this->lock->decryptAndVerify('YELLOW SUBMARINE', $password)
+            $this->lock->check('YELLOW SUBMARINE', $password)
         );
         
         $this->assertFalse(
-            $this->lock->decryptAndVerify('YELLOW SUBMARINF', $password)
+            $this->lock->check('YELLOW SUBMARINF', $password)
         );
     }
 
@@ -58,11 +58,11 @@ class PasswordLockTest extends TestCase
      */
     public function testBitflip(): void
     {
-        $password = $this->lock->hashAndEncrypt('YELLOW SUBMARINE');
+        $password = $this->lock->lock('YELLOW SUBMARINE');
 
         $password[0] = (ord($password[0]) === 0 ? 255 : 0);
         
-        $this->lock->decryptAndVerify('YELLOW SUBMARINE', $password);
+        $this->lock->check('YELLOW SUBMARINE', $password);
     }
 
     /**
@@ -70,8 +70,8 @@ class PasswordLockTest extends TestCase
      */
     public function testNullByteTruncation(): void
     {
-        $hash1 = $this->lock->hashAndEncrypt("abc\0defg");
-        $hash2 = $this->lock->hashAndEncrypt("abc");
+        $hash1 = $this->lock->lock("abc\0defg");
+        $hash2 = $this->lock->lock("abc");
 
         $this->assertNotSame($hash1, $hash2);
     }

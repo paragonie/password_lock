@@ -36,7 +36,7 @@ class PasswordLock
      *
      * @throws EnvironmentIsBrokenException
      */
-    public function hashAndEncrypt(string $password): string
+    public function lock(string $password): string
     {
         $hash = $this->hasher->hash($password);
 
@@ -50,7 +50,7 @@ class PasswordLock
      * @throws EnvironmentIsBrokenException
      * @throws WrongKeyOrModifiedCiphertextException
      */
-    public function decryptAndVerify(string $password, string $ciphertext): bool
+    public function check(string $password, string $ciphertext): bool
     {
         $hash = Crypto::decrypt(
             $ciphertext,
