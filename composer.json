@@ -37,6 +37,17 @@
             "ParagonIE\\PasswordLock\\Tests\\": "tests/"
         }
     },
+    "scripts": {
+        "test": "phpunit --colors=always",
+        "analyze": "pslam",
+        "cs-check": "php-cs-fixer fix --dry-run -vvv",
+        "cs-fix": "php-cs-fixer fix -vvv",
+        "check": [
+            "@cs-check",
+            "@analyze",
+            "@test"
+        ]
+    },
     "support": {
         "email": "info@paragonie.com",
         "issues": "https://github.com/paragonie/password_lock/issues",
