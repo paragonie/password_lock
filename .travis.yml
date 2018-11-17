@@ -5,6 +5,12 @@ matrix:
     fast_finish: true
     include:
         - php: 7.1
+          env:
+            - DEPS=lowest
+        - php: 7.1
+          env:
+            - CS_CHECK=1
+            - ANALYZE=1
         - php: 7.2
         - php: 7.3
         - php: nightly
@@ -18,5 +24,6 @@ install:
     - chmod +x ./run-tests.sh
 
 script:
-    - vendor/bin/phpunit
-    - vendor/bin/psalm
+    - composer test
+    - if [[ $ANALYZE == 'true' ]]; then composer analyze ; fi
+    - if [[ $CS_CHECK == 'true' ]]; then composer cs-check ; fi
