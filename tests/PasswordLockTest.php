@@ -75,4 +75,23 @@ class PasswordLockTest extends TestCase
 
         $this->assertNotSame($hash1, $hash2);
     }
+
+    /**
+     * @throws EnvironmentIsBrokenException
+     * @throws WrongKeyOrModifiedCiphertextException
+     */
+    public function testKeyRotation(): void
+    {
+        $key1 = Key::createNewRandomKey();
+        $lock1 = new PasswordLock($key1);
+
+        $key2 = Key::createNewRandomKey();
+        $lock2 = new PasswordLock($key2);
+
+        $hash1 = $lock1->lock('ParagonIE');
+        $hash2 = PasswordLock::rotateKey($hash1, $key1, $key2);
+
+        $this->assertNotSame($hash1, $hash2);
+        $this->assertTrue($lock2->check('ParagonIE', $hash2));
+    }
 }
