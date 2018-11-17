@@ -13,13 +13,18 @@ matrix:
             - ANALYZE=true
         - php: 7.2
         - php: 7.3
+          env:
+            - NO_CS=true
         - php: nightly
+          env:
+            - NO_CS=true
     allow_failures:
         - php: 7.3
         - php: nightly
 
 install:
     - composer self-update
+    - if [[ $NO_CS == 'true' ]]; then composer remove --dev friendsofphp/php-cs-fixer ; fi
     - composer update
     - chmod +x ./run-tests.sh
 
