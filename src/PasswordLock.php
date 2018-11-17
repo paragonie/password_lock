@@ -23,8 +23,7 @@ class PasswordLock
      */
     protected $hasher;
 
-
-    public function __construct(Key $key,PasswordHasherInterface $hasher = null)
+    public function __construct(Key $key, PasswordHasherInterface $hasher = null)
     {
         $this->key = $key;
         $this->hasher = $hasher ?? new PasswordHasher();
@@ -69,6 +68,7 @@ class PasswordLock
     public static function rotateKey(string $ciphertext, Key $oldKey, Key $newKey): string
     {
         $plaintext = Crypto::decrypt($ciphertext, $oldKey);
+
         return Crypto::encrypt($plaintext, $newKey);
     }
 }

@@ -6,13 +6,11 @@ namespace ParagonIE\PasswordLock\Hasher;
 
 use ParagonIE\ConstantTime\Base64;
 use ParagonIE\PasswordLock\Exception\HashingException;
-
-use function password_hash;
-use function password_verify;
+use const PASSWORD_DEFAULT;
 use function hash;
 use function is_string;
-
-use const PASSWORD_DEFAULT;
+use function password_hash;
+use function password_verify;
 
 class PasswordHasher implements PasswordHasherInterface
 {
