@@ -1,19 +1,34 @@
 language: php
 sudo: false
 
-php:
-    - 7.0
-    - 7.1
-    - 7.2
-
 matrix:
     fast_finish: true
+    include:
+        - php: 7.1
+          env:
+            - DEPS=lowest
+        - php: 7.1
+          env:
+            - CS_CHECK=true
+            - ANALYZE=true
+        - php: 7.2
+        - php: 7.3
+          env:
+            - NO_CS=true
+        - php: nightly
+          env:
+            - NO_CS=true
+    allow_failures:
+        - php: 7.3
+        - php: nightly
 
 install:
     - composer self-update
+    - if [[ $NO_CS == 'true' ]]; then composer remove --dev friendsofphp/php-cs-fixer ; fi
     - composer update
     - chmod +x ./run-tests.sh
 
 script:
-    - vendor/bin/phpunit
-    - vendor/bin/psalm
+    - composer test
+    - if [[ $ANALYZE == 'true' ]]; then composer analyze ; fi
+    - if [[ $CS_CHECK == 'true' ]]; then composer cs-check ; fi
