@@ -1,31 +1,26 @@
 {
-    "name":         "paragonie/password_lock",
-    "description":  "Wraps Bcrypt-SHA2 in Authenticated Encryption",
+    "name": "paragonie/password_lock",
+    "description": "Wraps Bcrypt-SHA2 in Authenticated Encryption",
     "keywords": [
-            "password",
-            "hash",
-            "encryption",
-            "hashing"
-        ],
-    "license":      "MIT",
-    "type":         "library",
+        "password",
+        "hash",
+        "encryption",
+        "hashing"
+    ],
+    "license": "MIT",
+    "type": "library",
     "authors": [
-            {
-                "name":     "Scott Arciszewski",
-                "email":    "scott@paragonie.com",
-                "homepage": "https://paragonie.com",
-                "role":     "Developer"
-            }
-        ],
+        {
+            "name": "Scott Arciszewski",
+            "email": "scott@paragonie.com",
+            "homepage": "https://paragonie.com",
+            "role": "Developer"
+        }
+    ],
     "support": {
-        "issues":   "https://github.com/paragonie/password_lock/issues",
-        "email":    "info@paragonie.com",
-        "source":   "https://github.com/paragonie/password_lock"
-    },
-    "autoload": {
-        "files": [
-            "src/PasswordLock.php"
-        ]
+        "issues": "https://github.com/paragonie/password_lock/issues",
+        "source": "https://github.com/paragonie/password_lock"
+        "email": "info@paragonie.com",
     },
     "require": {
         "php": "^7",
@@ -33,7 +28,13 @@
         "paragonie/constant_time_encoding": "^2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6",
-        "vimeo/psalm": "^0|^1"
+        "phpunit/phpunit": "^6|^7|^8",
+        "vimeo/psalm": "^3"
     }
+    "autoload": {
+        "files": [
+            "src/PasswordLock.php"
+        ]
+    },
+    "prefer-stable": true
 }
