@@ -47,7 +47,11 @@ if (isset($_POST['password'])) {
         die("Password must be a string");
     }
     if (PasswordLock::decryptAndVerify($_POST['password'], $storeMe, $key)) {
-        // Success!
+        // Authenticated
+		if(PasswordLock::passwordNeedsRehash($storeMe, $key)) {
+			$storeMe = PasswordLock::hashAndEncrypt($_POST['password'], $key);
+		}
+		// Success!
     }
 }
 ```

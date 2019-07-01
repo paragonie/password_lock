@@ -93,6 +93,33 @@ class PasswordLock
     }
 
     /**
+     * 1. VerifyHMAC-then-Decrypt the ciphertext to get the hash
+     * 2. Verify that the hash matches the given options
+     *
+     * @param string $ciphertext
+     * @param Key $aesKey
+     * @return bool
+     * @throws \Exception
+     * @throws \InvalidArgumentException
+     */
+    public static function passwordNeedsRehash(string $ciphertext, Key $aesKey):bool
+    {
+        $hash = Crypto::decrypt(
+            $ciphertext,
+            $aesKey
+        );
+
+        if (!\is_string($hash)) {
+            throw new \Exception("Unknown hashing error.");
+        }
+
+        return \password_needs_rehash(
+            $hash,
+            PASSWORD_DEFAULT
+        );
+    }
+
+    /**
      * Key rotation method -- decrypt with your old key then re-encrypt with your new key
      *
      * @param string $ciphertext
