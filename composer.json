@@ -1,5 +1,5 @@
 {
-    "name":         "paragonie/password_lock",
+    "name":         "sonusgeneration/password_lock",
     "description":  "Wraps Bcrypt-SHA2 in Authenticated Encryption",
     "keywords": [
             "password",
