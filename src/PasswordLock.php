@@ -2,11 +2,17 @@
 declare(strict_types=1);
 namespace ParagonIE\PasswordLock;
 
-use \Defuse\Crypto\Crypto;
-use \Defuse\Crypto\Key;
-use \ParagonIE\ConstantTime\Base64;
-use \ParagonIE\ConstantTime\Binary;
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Exception\EnvironmentIsBrokenException;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
+use Defuse\Crypto\Key;
+use ParagonIE\ConstantTime\Base64;
+use ParagonIE\ConstantTime\Binary;
 
+/**
+ * Class PasswordLock
+ * @package ParagonIE\PasswordLock
+ */
 class PasswordLock
 {
     /**
@@ -16,8 +22,9 @@ class PasswordLock
      * @param string $password
      * @param Key $aesKey
      * @return string
-     * @throws \Exception
-     * @throws \InvalidArgumentException
+     *
+     * @throws EnvironmentIsBrokenException
+     * @psalm-suppress InvalidArgument
      */
     public static function hashAndEncrypt(string $password, Key $aesKey): string
     {
@@ -29,7 +36,7 @@ class PasswordLock
             PASSWORD_DEFAULT
         );
         if (!\is_string($hash)) {
-            throw new \Exception("Unknown hashing error.");
+            throw new EnvironmentIsBrokenException("Unknown hashing error.");
         }
         return Crypto::encrypt($hash, $aesKey);
     }
@@ -41,20 +48,22 @@ class PasswordLock
      * @param string $ciphertext
      * @param string $aesKey - must be exactly 16 bytes
      * @return bool
-     * @throws \Exception
+     *
      * @throws \InvalidArgumentException
+     * @throws EnvironmentIsBrokenException
+     * @throws WrongKeyOrModifiedCiphertextException
      */
     public static function decryptAndVerifyLegacy(string $password, string $ciphertext, string $aesKey): bool
     {
         if (Binary::safeStrlen($aesKey) !== 16) {
-            throw new \Exception("Encryption keys must be 16 bytes long");
+            throw new \InvalidArgumentException("Encryption keys must be 16 bytes long");
         }
         $hash = Crypto::legacyDecrypt(
             $ciphertext,
             $aesKey
         );
         if (!\is_string($hash)) {
-            throw new \Exception("Unknown hashing error.");
+            throw new EnvironmentIsBrokenException("Unknown hashing error.");
         }
         return \password_verify(
             Base64::encode(
@@ -72,8 +81,9 @@ class PasswordLock
      * @param string $ciphertext
      * @param Key $aesKey
      * @return bool
-     * @throws \Exception
-     * @throws \InvalidArgumentException
+     *
+     * @throws EnvironmentIsBrokenException
+     * @throws WrongKeyOrModifiedCiphertextException
      */
     public static function decryptAndVerify(string $password, string $ciphertext, Key $aesKey): bool
     {
@@ -82,7 +92,7 @@ class PasswordLock
             $aesKey
         );
         if (!\is_string($hash)) {
-            throw new \Exception("Unknown hashing error.");
+            throw new EnvironmentIsBrokenException("Unknown hashing error.");
         }
         return \password_verify(
             Base64::encode(
@@ -99,6 +109,9 @@ class PasswordLock
      * @param  Key $oldKey
      * @param Key $newKey
      * @return string
+     *
+     * @throws EnvironmentIsBrokenException
+     * @throws WrongKeyOrModifiedCiphertextException
      */
     public static function rotateKey(string $ciphertext, Key $oldKey, Key $newKey): string
     {

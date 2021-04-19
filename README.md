@@ -1,5 +1,7 @@
 # Password Lock
 
+[![Build Status](https://github.com/paragonie/password_lock/actions/workflows/ci.yml/badge.svg)](https://github.com/paragonie/password_lock/actions)
+
 **MIT Licensed** - feel free to use to enhance the security of any of your PHP projects
 
 Wraps Bcrypt-SHA384 in Authenticated Encryption. Published by [Paragon Initiative Enterprises](https://paragonie.com). Check out our other [open source projects](https://paragonie.com/projects) too.
