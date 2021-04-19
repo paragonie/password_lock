@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
 
-use \ParagonIE\PasswordLock\PasswordLock;
-use \Defuse\Crypto\Key;
+use ParagonIE\PasswordLock\PasswordLock;
+use Defuse\Crypto\Key;
 use PHPUnit\Framework\TestCase;
+use Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException;
 
 /**
  * @backupGlobals disabled
@@ -25,16 +26,19 @@ class PasswordLockTest extends TestCase
             PasswordLock::decryptAndVerify('YELLOW SUBMARINF', $password, $key)
         );
     }
-    
-    /**
-     * @expectedException \Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException
-     */
+
     public function testBitflip()
     {
-        $key = Key::createNewRandomKey();
-        $password = PasswordLock::hashAndEncrypt('YELLOW SUBMARINE', $key);
-        $password[0] = (\ord($password[0]) === 0 ? 255 : 0);
-        
-        PasswordLock::decryptAndVerify('YELLOW SUBMARINE', $password, $key);
+        $failed = false;
+        try {
+            $key = Key::createNewRandomKey();
+            $password = PasswordLock::hashAndEncrypt('YELLOW SUBMARINE', $key);
+            $password[0] = (\ord($password[0]) === 0 ? 255 : 0);
+
+            PasswordLock::decryptAndVerify('YELLOW SUBMARINE', $password, $key);
+        } catch (WrongKeyOrModifiedCiphertextException $ex) {
+            $failed = true;
+        }
+        $this->assertTrue($failed, 'Bitflips should break the decryption');
     }
 }
