@@ -16,24 +16,46 @@ use ParagonIE\ConstantTime\Binary;
 class PasswordLock
 {
     /**
+     * @ref https://www.php.net/manual/en/function.password-hash.php
+     */
+    const OPTIONS_DEFAULT_BCRYPT = ['cost' => 12];
+    const OPTIONS_DEFAULT_ARGON2ID = [
+        'memory_cost' => 65536,
+        'time_cost' => 4,
+        'threads' => 1
+    ];
+
+    /**
      * 1. Hash password using bcrypt-base64-SHA256
      * 2. Encrypt-then-MAC the hash
      *
      * @param string $password
      * @param Key $aesKey
+     * @param ?array $hashOptions
      * @return string
      *
      * @throws EnvironmentIsBrokenException
+     * @throws \InvalidArgumentException
      * @psalm-suppress InvalidArgument
      */
-    public static function hashAndEncrypt(string $password, Key $aesKey): string
-    {
+    public static function hashAndEncrypt(
+        string $password,
+        Key $aesKey,
+        ?array $hashOptions = null
+    ): string {
+        if (is_null($hashOptions)) {
+            $hashOptions = static::getDefaultOptions();
+        }
+        if (array_key_exists('salt', $hashOptions)) {
+            throw new \InvalidArgumentException('Explicit salts are unsupported.');
+        }
         /** @var string $hash */
         $hash = \password_hash(
             Base64::encode(
                 \hash('sha384', $password, true)
             ),
-            PASSWORD_DEFAULT
+            PASSWORD_DEFAULT,
+            $hashOptions
         );
         if (!\is_string($hash)) {
             throw new EnvironmentIsBrokenException("Unknown hashing error.");
@@ -53,7 +75,11 @@ class PasswordLock
      * @throws EnvironmentIsBrokenException
      * @throws WrongKeyOrModifiedCiphertextException
      */
-    public static function decryptAndVerifyLegacy(string $password, string $ciphertext, string $aesKey): bool
+    public static function decryptAndVerifyLegacy(
+        string $password,
+        string $ciphertext,
+        string $aesKey
+    ): bool
     {
         if (Binary::safeStrlen($aesKey) !== 16) {
             throw new \InvalidArgumentException("Encryption keys must be 16 bytes long");
@@ -100,6 +126,50 @@ class PasswordLock
             ),
             $hash
         );
+    }
+
+    /**
+     * @return array<string, int>
+     *
+     * @psalm-suppress TypeDoesNotContainType
+     */
+    protected static function getDefaultOptions(): array
+    {
+        // Future-proofing:
+        if (PASSWORD_DEFAULT === PASSWORD_ARGON2ID) {
+            return self::OPTIONS_DEFAULT_ARGON2ID;
+        }
+        return self::OPTIONS_DEFAULT_BCRYPT;
+    }
+
+    /**
+     * Decrypt the ciphertext and ascertain if the stored password needs to be rehashed?
+     *
+     * @param string $ciphertext
+     * @param Key $aesKey
+     * @param ?array $hashOptions
+     * @return bool
+     *
+     * @throws EnvironmentIsBrokenException
+     * @throws WrongKeyOrModifiedCiphertextException
+     */
+    public static function needsRehash(
+        string $ciphertext,
+        Key $aesKey,
+        ?array $hashOptions = null
+    ): bool {
+        if (is_null($hashOptions)) {
+            $hashOptions = static::getDefaultOptions();
+        }
+        $hash = Crypto::decrypt(
+            $ciphertext,
+            $aesKey
+        );
+        if (!\is_string($hash)) {
+            throw new EnvironmentIsBrokenException("Unknown hashing error.");
+        }
+        /** @psalm-suppress InvalidArgument */
+        return password_needs_rehash($hash, PASSWORD_DEFAULT, $hashOptions);
     }
 
     /**
