@@ -4,6 +4,8 @@
 * Added support for `$hashOptions` in `hashAndEncrypt()` to support
   custom bcrypt costs. (This can also be used to support custom Argon2id
   parameters, should the default ever change in PHP.)
+* **Drops support for PHP 7.2 and older.**  
+  Use v3.0.3 if you need older PHP support.
 
 # Version 3.0.3 (2021-06-02)
 
