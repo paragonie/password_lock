@@ -54,6 +54,20 @@ if (isset($_POST['password'])) {
 }
 ```
 
+### Determine if a re-hash is necessary
+
+```php
+use ParagonIE\PasswordLock\PasswordLock;
+/**
+ * @var string $encryptedPwhash
+ * @var Defuse\Crypto\Key $key
+ */
+
+if (PasswordLock::needsRehash($encryptedPwhash, $key)) {
+    // Recalculate PasswordLock::hashAndEncrypt()
+}
+```
+
 ### Re-encrypt a hash with a different encryption key
 
 ```php

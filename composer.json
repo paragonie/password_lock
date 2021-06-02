@@ -28,7 +28,7 @@
         ]
     },
     "require": {
-        "php": "^7|^8",
+        "php": "^7.3|^8",
         "defuse/php-encryption": "^2",
         "paragonie/constant_time_encoding": "^2"
     },

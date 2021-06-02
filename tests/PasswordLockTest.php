@@ -41,4 +41,13 @@ class PasswordLockTest extends TestCase
         }
         $this->assertTrue($failed, 'Bitflips should break the decryption');
     }
+
+    public function testNeedsRehash()
+    {
+        $lowCost = ['cost' => 8];
+        $key = Key::createNewRandomKey();
+        $password = PasswordLock::hashAndEncrypt('YELLOW SUBMARINE', $key, $lowCost);
+        $this->assertTrue(PasswordLock::needsRehash($password, $key));
+        $this->assertFalse(PasswordLock::needsRehash($password, $key, $lowCost));
+    }
 }
