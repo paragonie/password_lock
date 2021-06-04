@@ -71,4 +71,4 @@ jobs:
         run: composer require --dev vimeo/psalm:^4
 
       - name: Static Analysis
-        run: vendor/bin/psalm
+        run: vendor/bin/psalm --php-version=${{ matrix.php-versions }}
