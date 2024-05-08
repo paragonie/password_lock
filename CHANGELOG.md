@@ -1,3 +1,7 @@
+## Version 3.1.1 (2024-5-08)
+
+* Update dependencies.
+
 # Version 3.1.0 (2021-06-02)
 
 * Added `needsRehash()` method.
