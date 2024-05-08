@@ -1,6 +1,11 @@
 # Password Lock
 
 [![Build Status](https://github.com/paragonie/password_lock/actions/workflows/ci.yml/badge.svg)](https://github.com/paragonie/password_lock/actions)
+[![Static Analysis](https://github.com/paragonie/password_lock/actions/workflows/psalm.yml/badge.svg)](https://github.com/paragonie/password_lock/actions)
+[![Latest Stable Version](https://poser.pugx.org/paragonie/password_lock/v/stable)](https://packagist.org/packages/paragonie/password_lock)
+[![Latest Unstable Version](https://poser.pugx.org/paragonie/password_lock/v/unstable)](https://packagist.org/packages/paragonie/password_lock)
+[![License](https://poser.pugx.org/paragonie/password_lock/license)](https://packagist.org/packages/paragonie/password_lock)
+[![Downloads](https://img.shields.io/packagist/dt/paragonie/password_lock.svg)](https://packagist.org/packages/paragonie/password_lock)
 
 **MIT Licensed** - feel free to use to enhance the security of any of your PHP projects
 
