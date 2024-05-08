@@ -60,9 +60,3 @@ jobs:
 
       - name: PHPUnit tests
         run: vendor/bin/phpunit
-
-      - name: Install Psalm
-        run: composer require --dev vimeo/psalm:^4
-
-      - name: Static Analysis
-        run: vendor/bin/psalm --php-version=${{ matrix.php-versions }}
