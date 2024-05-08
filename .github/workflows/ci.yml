@@ -13,7 +13,7 @@ jobs:
         phpunit-versions: ['latest']
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -30,10 +30,7 @@ jobs:
         run: composer install
 
       - name: PHPUnit tests
-        uses: php-actions/phpunit@v2
-        timeout-minutes: 30
-        with:
-          memory_limit: 256M
+        run: vendor/bin/phpunit
 
   modern:
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
@@ -41,11 +38,11 @@ jobs:
     strategy:
       matrix:
         operating-system: ['ubuntu-latest']
-        php-versions: ['7.4', '8.0']
+        php-versions: ['7.4', '8.0', '8.1', '8.2', '8.3']
         phpunit-versions: ['latest']
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -62,10 +59,7 @@ jobs:
         run: composer install
 
       - name: PHPUnit tests
-        uses: php-actions/phpunit@v2
-        timeout-minutes: 30
-        with:
-          memory_limit: 256M
+        run: vendor/bin/phpunit
 
       - name: Install Psalm
         run: composer require --dev vimeo/psalm:^4
