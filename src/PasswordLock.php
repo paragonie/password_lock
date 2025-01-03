@@ -26,7 +26,7 @@ class PasswordLock
     ];
 
     /**
-     * 1. Hash password using bcrypt-base64-SHA256
+     * 1. Hash password using bcrypt-base64-SHA384
      * 2. Encrypt-then-MAC the hash
      *
      * @param string $password
